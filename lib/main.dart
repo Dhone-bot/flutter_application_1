@@ -15,11 +15,12 @@ class _FormularioExemploState extends State<FormularioExemplo> {
   final _idade = TextEditingController();
   final List<String> _roles = ['cachorro', 'gato', 'outro'];
   String? _selectedRole;
+  bool _aceitarTermos = false;
 
   void _submeterFormulario() {
     if (_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Processando dados de ${_nomeAnimal.text}...')),
+        SnackBar(content: Text('validando')),
       );
     }
   }
@@ -84,13 +85,28 @@ class _FormularioExemploState extends State<FormularioExemplo> {
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
-                  if (value == null|| value < 0 ) {
+                  if (int.tryParse(value!) == null|| int.parse(value) < 0 ) {
                     return 'coloque uma idade valida!';
                   }
                   return null;
                 },
               ),
+              CheckboxListTile(
+                title: const Text('Aceitar termos'),
+                subtitle: const Text('li e concordo com os termos'
+                ),
+                 value: _aceitarTermos,
+                 onChanged: (novoValor) {
+                  setState( () {
+                    _aceitarTermos = novoValor ?? false;
+                   });
+                 }
               
+              ),
+              ElevatedButton(
+                onPressed: _submeterFormulario, 
+                child: Text('submit'),
+                )
             ],
           ),
         ),
