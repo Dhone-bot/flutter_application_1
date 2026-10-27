@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/perfil.dart';
 
 void main() => runApp(const MaterialApp(home: FormularioExemplo()));
 
@@ -8,22 +9,64 @@ class FormularioExemplo extends StatefulWidget {
   @override
   State<FormularioExemplo> createState() => _FormularioExemploState();
 }
+class Pet {
+final String nome;
+final String especie;
+final int idade;
+final bool eCastrado;
+Pet({
+required this.nome,
+required this.especie,
+required this.idade,
+required this.eCastrado,
+});
+}
 
 class _FormularioExemploState extends State<FormularioExemplo> {
   final _formKey = GlobalKey<FormState>();
   final _nomeAnimal = TextEditingController();
   final _idade = TextEditingController();
   final List<String> _roles = ['cachorro', 'gato', 'outro'];
-  String? _selectedRole;
+  String? _especie;
   bool _aceitarTermos = false;
+  final List<Pet> _petsCadastrados = [];
 
-  void _submeterFormulario() {
-    if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('validando')),
-      );
-    }
+
+void _adicionarPet() {
+if (_formKey.currentState!.validate()) {
+setState(() {
+_petsCadastrados.add(Pet(
+nome: _nomeAnimal.text,
+especie: _especie!,
+idade: int.parse(_idade.text),
+eCastrado: _aceitarTermos,
+));
+});
+//_limparFormulario();
+}
+}
+void _cadastrarPet() {
+  if (_formKey.currentState!.validate()) {
+    // 1. Instancia o objeto com os dados do formulário
+    final pet = Pet(
+      nome: _nomeAnimal.text,
+      especie: _especie!,
+      idade: int.parse(_idade.text),
+      eCastrado: _aceitarTermos,
+    );
+
+    // 2. Navega para a segunda tela enviando o parâmetro
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PerfilPetPage(pet: pet),
+      ),
+    );
   }
+}
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +94,7 @@ class _FormularioExemploState extends State<FormularioExemplo> {
               ),
               const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-            initialValue: _selectedRole, 
+            initialValue: _especie, 
             hint: const Text('Selecione uma especie'),
             decoration: const InputDecoration(
               labelText: 'selecione uma especie',
@@ -66,7 +109,7 @@ class _FormularioExemploState extends State<FormularioExemplo> {
             }).toList(),
             onChanged: (String? newValue) {
               setState(() {
-                _selectedRole = newValue;
+                _especie = newValue;
               });
             },
             validator: (value) {
@@ -104,8 +147,8 @@ class _FormularioExemploState extends State<FormularioExemplo> {
               
               ),
               ElevatedButton(
-                onPressed: _submeterFormulario, 
-                child: Text('submit'),
+                onPressed: _cadastrarPet, 
+                child: Text('adicionar'),
                 )
             ],
           ),
